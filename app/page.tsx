@@ -25,7 +25,21 @@ export default function BoardPage() {
 
     socket.on("gameState", (state: any) => {
       setBoard(state.board);
-      setBuzzedPlayer(state.buzzedPlayer);
+      setBuzzedPlayer((prevBuzzedPlayer) => {
+        // 新たに早押しされた場合のみ音を鳴らす
+        if (state.buzzedPlayer && !prevBuzzedPlayer) {
+          const player = state.players.find((p: any) => p.name === state.buzzedPlayer);
+          if (player) {
+            const colorNames = ["", "red", "green", "white", "blue"];
+            const colorName = colorNames[player.color];
+            if (colorName) {
+              const audio = new Audio(`/audios/${colorName}.wav`);
+              audio.play().catch((e) => console.log("Audio play failed:", e));
+            }
+          }
+        }
+        return state.buzzedPlayer;
+      });
       if (state.buzzedPlayer && state.players) {
         const player = state.players.find((p: any) => p.name === state.buzzedPlayer);
         setBuzzedColor(player ? player.color : null);
@@ -39,6 +53,7 @@ export default function BoardPage() {
       socket.disconnect();
     };
   }, []);
+
 
   // 各色の枚数を計算
   const counts = {
