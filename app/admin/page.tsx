@@ -15,10 +15,14 @@ const COLOR_CLASSES = [
 
 import { BuzzerManager } from "../components/admin/BuzzerManager";
 import { AdminPanelBoard } from "../components/admin/AdminPanelBoard";
+import { QuestionManager } from "../components/admin/QuestionManager";
 
 export default function AdminPage() {
   const [board, setBoard] = useState<number[]>(Array(25).fill(0));
   const [buzzedPlayer, setBuzzedPlayer] = useState<string | null>(null);
+  const [questionText, setQuestionText] = useState<string>("");
+  const [answerText, setAnswerText] = useState<string>("");
+  const [showAnswer, setShowAnswer] = useState<boolean>(false);
   
   // 現在操作中の色
   const [activeColor, setActiveColor] = useState<number>(1);
@@ -32,6 +36,9 @@ export default function AdminPage() {
     socket.on("gameState", (state: any) => {
       setBoard(state.board);
       setBuzzedPlayer(state.buzzedPlayer);
+      setQuestionText(state.questionText || "");
+      setAnswerText(state.answerText || "");
+      setShowAnswer(state.showAnswer || false);
     });
     return () => {
       socket.off("gameState");
@@ -82,13 +89,20 @@ export default function AdminPage() {
       <h1 className="text-3xl font-bold text-slate-800 mb-8">司会者コントロールパネル</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <BuzzerManager 
-          buzzedPlayer={buzzedPlayer}
-          activeColor={activeColor}
-          setActiveColor={setActiveColor}
-          forceMode={forceMode}
-          setForceMode={setForceMode}
-        />
+        <div className="flex flex-col">
+          <BuzzerManager
+            buzzedPlayer={buzzedPlayer}
+            activeColor={activeColor}
+            setActiveColor={setActiveColor}
+            forceMode={forceMode}
+            setForceMode={setForceMode}
+          />
+          <QuestionManager
+            currentQuestionText={questionText}
+            currentAnswerText={answerText}
+            currentShowAnswer={showAnswer}
+          />
+        </div>
         
         <AdminPanelBoard 
           board={board}

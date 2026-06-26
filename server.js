@@ -19,6 +19,9 @@ app.prepare().then(() => {
     // 5x5の盤面。0:空, 1:赤, 2:緑, 3:白, 4:青
     board: Array(25).fill(0),
     players: [], // { id, name, color }
+    questionText: "",
+    answerText: "",
+    showAnswer: false,
   };
 
   io.on("connection", (socket) => {
@@ -78,6 +81,14 @@ app.prepare().then(() => {
       io.emit("correctAnswer");
     });
 
+
+    // 問題と解答の更新
+    socket.on("updateQuestion", (data) => {
+      if (data.questionText !== undefined) gameState.questionText = data.questionText;
+      if (data.answerText !== undefined) gameState.answerText = data.answerText;
+      if (data.showAnswer !== undefined) gameState.showAnswer = data.showAnswer;
+      io.emit("gameState", gameState);
+    });
 
     // パネルが更新された時
     socket.on("updateBoard", (newBoard) => {
