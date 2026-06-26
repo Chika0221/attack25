@@ -70,6 +70,15 @@ app.prepare().then(() => {
       io.emit("gameState", gameState);
     });
 
+    socket.on("wrongAnswer", () => {
+      io.emit("wrongAnswer");
+    });
+
+    socket.on("correctAnswer", () => {
+      io.emit("correctAnswer");
+    });
+
+
     // パネルが更新された時
     socket.on("updateBoard", (newBoard) => {
       gameState.board = newBoard;
