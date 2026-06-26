@@ -48,8 +48,15 @@ export default function BoardPage() {
       }
     });
 
+    socket.on("wrongAnswer", () => {
+      // フォルダには but.mp3 があるためそちらを鳴らします
+      const audio = new Audio(`/audios/but.mp3`);
+      audio.play().catch((e) => console.log("Audio play failed:", e));
+    });
+
     return () => {
       socket.off("gameState");
+      socket.off("wrongAnswer");
       socket.disconnect();
     };
   }, []);

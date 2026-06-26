@@ -43,9 +43,23 @@ export function BuzzerManager({ buzzedPlayer, activeColor, setActiveColor, force
       {buzzedPlayer ? (
         <div className="mb-6">
           <p className="text-2xl font-bold text-red-600 mb-2">解答者: {buzzedPlayer}</p>
+          <div className="flex gap-2 mb-2">
+            <button 
+              onClick={() => socket.emit("correctAnswer")}
+              className="px-6 py-3 bg-red-500 text-white font-bold rounded hover:bg-red-600 flex-1"
+            >
+              正解 (〇)
+            </button>
+            <button 
+              onClick={() => socket.emit("wrongAnswer")}
+              className="px-6 py-3 bg-blue-600 text-white font-bold rounded hover:bg-blue-700 flex-1"
+            >
+              不正解 (×)
+            </button>
+          </div>
           <button 
             onClick={handleResetBuzzer}
-            className="px-6 py-3 bg-blue-600 text-white font-bold rounded hover:bg-blue-700 w-full"
+            className="px-6 py-3 bg-slate-600 text-white font-bold rounded hover:bg-slate-700 w-full"
           >
             解答終了（待機状態に戻す）
           </button>
