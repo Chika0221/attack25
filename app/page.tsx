@@ -14,17 +14,24 @@ const COLORS = [
 import { Header } from "./components/Header";
 import { Board } from "./components/Board";
 import { ScoreBoard } from "./components/ScoreBoard";
+import { QuestionBox } from "./components/QuestionBox";
 
 export default function BoardPage() {
   const [board, setBoard] = useState<number[]>(Array(25).fill(0));
   const [buzzedPlayer, setBuzzedPlayer] = useState<string | null>(null);
   const [buzzedColor, setBuzzedColor] = useState<number | null>(null);
+  const [questionText, setQuestionText] = useState<string>("");
+  const [answerText, setAnswerText] = useState<string>("");
+  const [showAnswer, setShowAnswer] = useState<boolean>(false);
 
   useEffect(() => {
     socket.connect();
 
     socket.on("gameState", (state: any) => {
       setBoard(state.board);
+      setQuestionText(state.questionText || "");
+      setAnswerText(state.answerText || "");
+      setShowAnswer(state.showAnswer || false);
       setBuzzedPlayer((prevBuzzedPlayer) => {
         // 新たに早押しされた場合のみ音を鳴らす
         if (state.buzzedPlayer && !prevBuzzedPlayer) {
@@ -78,6 +85,14 @@ export default function BoardPage() {
         style={{ maxHeight: "100vh", maxWidth: "177.77vh" }}
       >
         <Header buzzedPlayer={buzzedPlayer} buzzedColor={buzzedColor} />
+
+        {questionText && (
+          <QuestionBox
+            questionText={questionText}
+            answerText={answerText}
+            showAnswer={showAnswer}
+          />
+        )}
 
         {/* メインコンテンツ（盤面とスコア） */}
         <div className="flex flex-row gap-8 w-full flex-1 items-stretch justify-center pb-4">
