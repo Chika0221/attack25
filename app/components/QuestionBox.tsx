@@ -12,7 +12,7 @@ export function QuestionBox({ questionText, answerText, showAnswer }: QuestionBo
   }
 
   return (
-    <div className="w-full max-w-4xl bg-slate-800 text-white rounded-xl shadow-xl border border-slate-700 p-6 mb-8">
+    <div className="w-full max-w-4xl bg-slate-800/95 text-white rounded-xl shadow-2xl border border-slate-700 p-6 backdrop-blur-sm">
       <div className="mb-4">
         <h2 className="text-xl font-bold text-slate-400 mb-2">問題</h2>
         <p className="text-3xl font-bold whitespace-pre-wrap">{questionText}</p>

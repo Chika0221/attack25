@@ -87,11 +87,15 @@ export default function BoardPage() {
         <Header buzzedPlayer={buzzedPlayer} buzzedColor={buzzedColor} />
 
         {questionText && (
-          <QuestionBox
-            questionText={questionText}
-            answerText={answerText}
-            showAnswer={showAnswer}
-          />
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-4xl px-4 pointer-events-none">
+            <div className="pointer-events-auto">
+              <QuestionBox
+                questionText={questionText}
+                answerText={answerText}
+                showAnswer={showAnswer}
+              />
+            </div>
+          </div>
         )}
 
         {/* メインコンテンツ（盤面とスコア） */}
