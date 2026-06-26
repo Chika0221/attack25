@@ -14,6 +14,7 @@ const COLORS = [
 export default function BoardPage() {
   const [board, setBoard] = useState<number[]>(Array(25).fill(0));
   const [buzzedPlayer, setBuzzedPlayer] = useState<string | null>(null);
+  const [buzzedColor, setBuzzedColor] = useState<number | null>(null);
 
   useEffect(() => {
     socket.connect();
@@ -21,6 +22,12 @@ export default function BoardPage() {
     socket.on("gameState", (state: any) => {
       setBoard(state.board);
       setBuzzedPlayer(state.buzzedPlayer);
+      if (state.buzzedPlayer && state.players) {
+        const player = state.players.find((p: any) => p.name === state.buzzedPlayer);
+        setBuzzedColor(player ? player.color : null);
+      } else {
+        setBuzzedColor(null);
+      }
     });
 
     return () => {
@@ -49,9 +56,15 @@ export default function BoardPage() {
         <div className="w-full flex items-center justify-between h-24 mb-4">
           <h1 className="text-5xl font-extrabold text-white tracking-widest ml-4">ATTACK 25</h1>
           
-          <div className="flex-1 flex items-center justify-center h-full ml-12 bg-slate-800 rounded-xl border border-slate-700 shadow-xl">
+          <div className={`flex-1 flex items-center justify-center h-full ml-12 rounded-xl border shadow-xl transition-colors duration-300 ${
+            buzzedColor === 1 ? "bg-red-500 border-red-400" :
+            buzzedColor === 2 ? "bg-green-500 border-green-400" :
+            buzzedColor === 3 ? "bg-white border-slate-300" :
+            buzzedColor === 4 ? "bg-blue-500 border-blue-400" :
+            "bg-slate-800 border-slate-700"
+          }`}>
             {buzzedPlayer ? (
-              <div className="text-4xl font-black text-yellow-400 animate-pulse">
+              <div className={`text-4xl font-black animate-pulse ${buzzedColor === 3 ? "text-black" : "text-white"}`}>
                 🚨 {buzzedPlayer} が解答中！ 🚨
               </div>
             ) : (
