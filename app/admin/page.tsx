@@ -21,6 +21,8 @@ export default function AdminPage() {
   const [activeColor, setActiveColor] = useState<number>(1);
   // 強制上書きモード（オセロロジックを無視してそのマスだけ変える）
   const [forceMode, setForceMode] = useState<boolean>(false);
+  // アニメーション実行中フラグ
+  const [isAnimating, setIsAnimating] = useState<boolean>(false);
 
   useEffect(() => {
     socket.connect();
@@ -39,11 +41,14 @@ export default function AdminPage() {
   };
 
   const handlePanelClick = (index: number) => {
+    if (isAnimating) return;
+
     let newBoard = [...board];
 
     if (forceMode) {
       // 強制上書きモード
       newBoard[index] = activeColor;
+      socket.emit("updateBoard", newBoard);
     } else {
       // 通常モード（オセロロジック）
       if (board[index] !== 0) {
@@ -54,13 +59,23 @@ export default function AdminPage() {
       
       // クリックしたマスを塗る
       newBoard[index] = activeColor;
-      // 挟んだマスを塗る
-      flippable.forEach((fIndex) => {
-        newBoard[fIndex] = activeColor;
-      });
-    }
+      socket.emit("updateBoard", [...newBoard]);
 
-    socket.emit("updateBoard", newBoard);
+      if (flippable.length > 0) {
+        setIsAnimating(true);
+        let i = 0;
+        const interval = setInterval(() => {
+          if (i < flippable.length) {
+            newBoard[flippable[i]] = activeColor;
+            socket.emit("updateBoard", [...newBoard]);
+            i++;
+          } else {
+            clearInterval(interval);
+            setIsAnimating(false);
+          }
+        }, 600); // 0.6秒ごとに1枚ずつひっくり返す
+      }
+    }
   };
 
   const handleClearBoard = () => {
